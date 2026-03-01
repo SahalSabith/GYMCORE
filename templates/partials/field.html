@@ -1,0 +1,22 @@
+{# Usage: {% include 'partials/field.html' with field=form.email %} #}
+<div class="mb-5">
+  <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-iron-300 mb-1.5">
+    {{ field.label }}{% if field.field.required %}<span class="text-forge-400 ml-0.5">*</span>{% endif %}
+  </label>
+  {% if field.field.widget.input_type == 'file' %}
+    <input type="file" name="{{ field.html_name }}" id="{{ field.id_for_label }}"
+      class="block w-full text-sm text-iron-400 bg-iron-700 border border-iron-600 rounded-lg px-3 py-2.5 file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-forge-500 file:text-white hover:file:bg-forge-600 cursor-pointer">
+  {% elif field.field.widget.input_type == 'textarea' %}
+    <textarea name="{{ field.html_name }}" id="{{ field.id_for_label }}" rows="3"
+      class="block w-full bg-iron-700 border border-iron-600 rounded-lg px-4 py-3 text-sm text-iron-100 placeholder-iron-500 focus:ring-2 focus:ring-forge-500 focus:border-transparent transition-colors">{{ field.value|default:'' }}</textarea>
+  {% else %}
+    <input type="{{ field.field.widget.input_type }}" name="{{ field.html_name }}" id="{{ field.id_for_label }}"
+      value="{% if field.field.widget.input_type != 'password' %}{{ field.value|default:'' }}{% endif %}"
+      placeholder="{{ field.field.widget.attrs.placeholder|default:'' }}"
+      class="block w-full bg-iron-700 border border-iron-600 rounded-lg px-4 py-3 text-sm text-iron-100 placeholder-iron-500 focus:ring-2 focus:ring-forge-500 focus:border-transparent transition-colors"
+      {% if field.field.required %}required{% endif %}>
+  {% endif %}
+  {% for error in field.errors %}
+    <p class="mt-1 text-xs text-red-400">{{ error }}</p>
+  {% endfor %}
+</div>

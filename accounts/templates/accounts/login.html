@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Login — IronCore{% endblock %}
+{% block auth_content %}
+<div class="min-h-screen flex">
+  <div class="hidden lg:flex flex-col justify-between w-1/2 p-12" style="background:linear-gradient(135deg,#0d131e 60%,#1a0800);border-right:1px solid #1f2937;">
+    <span class="font-display text-3xl tracking-widest text-brand">IRONCORE</span>
+    <div>
+      <p class="font-display text-6xl xl:text-7xl text-white leading-none mb-4">FORGE YOUR<br>LIMITS.</p>
+      <p class="text-gray-400 text-lg">The complete gym management platform for athletes and coaches.</p>
+    </div>
+    <p class="text-xs text-gray-600">© 2025 IronCore Gym Platform</p>
+  </div>
+  <div class="flex-1 flex flex-col justify-center items-center p-6 md:p-12">
+    <div class="w-full max-w-sm">
+      <div class="mb-8 lg:hidden"><span class="font-display text-3xl tracking-widest text-brand">IRONCORE</span></div>
+      <h1 class="text-2xl font-bold text-white mb-1">Welcome back</h1>
+      <p class="text-gray-400 text-sm mb-8">Sign in to your account</p>
+      {% if form.non_field_errors %}
+      <div class="mb-4 px-4 py-3 rounded-lg bg-red-900/40 text-red-300 border border-red-800 text-sm">{{ form.non_field_errors.0 }}</div>
+      {% endif %}
+      <form method="post" class="space-y-5">
+        {% csrf_token %}
+        <div>
+          <label class="block text-xs font-medium text-gray-400 uppercase tracking-widest mb-2">Email</label>
+          <input type="email" name="username" value="{{ form.username.value|default:'' }}" placeholder="your@email.com" class="w-full px-4 py-3 rounded-lg border text-sm">
+          {% if form.username.errors %}<p class="mt-1 text-xs text-red-400">{{ form.username.errors.0 }}</p>{% endif %}
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-400 uppercase tracking-widest mb-2">Password</label>
+          <input type="password" name="password" placeholder="••••••••" class="w-full px-4 py-3 rounded-lg border text-sm">
+          {% if form.password.errors %}<p class="mt-1 text-xs text-red-400">{{ form.password.errors.0 }}</p>{% endif %}
+        </div>
+        <button type="submit" class="btn-primary w-full py-3 rounded-lg font-semibold text-sm tracking-wide">Sign In</button>
+      </form>
+      <p class="text-center text-sm text-gray-500 mt-6">No account? <a href="{% url 'accounts:register' %}" class="text-brand hover:underline font-medium">Create one</a></p>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block title %}Respond to Session — IronForge{% endblock %}
+{% block content %}
+<div class="max-w-lg mx-auto">
+  <div class="flex items-center gap-3 mb-6">
+    <a href="{% url 'sessions:trainer_sessions' %}" class="text-gray-400 hover:text-white transition-colors">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+    </a>
+    <h1 class="text-3xl font-display tracking-widest text-white">RESPOND</h1>
+  </div>
+
+  <!-- Session summary -->
+  <div class="bg-surface-card border border-surface-border rounded-xl p-5 mb-5">
+    <p class="text-xs text-gray-500 uppercase tracking-widest mb-3">Session Request</p>
+    <div class="space-y-2 text-sm">
+      <div class="flex justify-between"><span class="text-gray-400">Member</span><span class="text-white font-medium">{{ session.member.get_full_name }}</span></div>
+      <div class="flex justify-between"><span class="text-gray-400">Date</span><span class="text-white font-medium">{{ session.date|date:"D, M d Y" }}</span></div>
+      <div class="flex justify-between"><span class="text-gray-400">Time</span><span class="text-white font-medium">{{ session.time|time:"g:i A" }}</span></div>
+      {% if session.notes %}
+      <div class="pt-2 border-t border-surface-border">
+        <p class="text-gray-400 text-xs mb-1">Member's note:</p>
+        <p class="text-gray-300">{{ session.notes }}</p>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="bg-surface-card border border-surface-border rounded-xl p-6">
+    <form method="post">
+      {% csrf_token %}
+      {% for field in form %}
+      <div class="mb-5">
+        <label class="block text-sm font-medium text-gray-300 mb-1.5">{{ field.label }}</label>
+        {{ field }}
+        {% for error in field.errors %}<p class="text-red-400 text-xs mt-1">{{ error }}</p>{% endfor %}
+      </div>
+      {% endfor %}
+      <button type="submit" class="w-full btn-primary py-3 rounded-lg font-semibold">Submit Response</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

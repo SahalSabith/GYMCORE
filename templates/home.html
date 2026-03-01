@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% block title %}IronForge — Gym Management Platform{% endblock %}
+
+{% block content %}
+<section class="relative min-h-screen flex items-center overflow-hidden">
+  <div class="absolute inset-0 opacity-5" style="background-image: repeating-linear-gradient(0deg, #f97316 0px, #f97316 1px, transparent 1px, transparent 60px), repeating-linear-gradient(90deg, #f97316 0px, #f97316 1px, transparent 1px, transparent 60px);"></div>
+  <div class="absolute inset-0 bg-gradient-to-br from-iron-900 via-iron-900/95 to-iron-800"></div>
+  <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+    <div class="max-w-3xl">
+      <div class="inline-flex items-center gap-2 px-3 py-1.5 bg-forge-500/10 border border-forge-500/30 rounded-full mb-6">
+        <span class="w-1.5 h-1.5 bg-forge-400 rounded-full animate-pulse"></span>
+        <span class="text-forge-400 text-xs font-semibold tracking-widest uppercase">Gym Management Platform</span>
+      </div>
+      <h1 class="font-display text-7xl sm:text-9xl tracking-widest text-white leading-none mb-6">
+        IRON<span class="text-forge-500">FORGE</span>
+      </h1>
+      <p class="text-iron-300 text-xl leading-relaxed mb-10 max-w-xl">
+        A complete gym management system for admins, trainers, and members. Track progress, manage schedules, and forge results.
+      </p>
+      <div class="flex flex-col sm:flex-row gap-4">
+        <a href="{% url 'accounts:register' %}" class="inline-flex items-center justify-center gap-2 bg-forge-500 hover:bg-forge-600 text-white font-semibold px-8 py-4 rounded-xl transition-all hover:scale-105 text-lg">
+          Join Now
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+        </a>
+        <a href="{% url 'accounts:login' %}" class="inline-flex items-center justify-center gap-2 border border-iron-600 hover:border-forge-500 text-iron-200 hover:text-white font-semibold px-8 py-4 rounded-xl transition-all text-lg">
+          Sign In
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="bg-iron-800 py-24">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-16">
+      <h2 class="font-display text-5xl tracking-wider text-white mb-4">BUILT FOR EVERY ROLE</h2>
+      <p class="text-iron-400 max-w-xl mx-auto">Three dedicated experiences tailored to how each person works.</p>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="bg-iron-900 border border-iron-700 rounded-2xl p-8 hover:border-forge-500/50 transition-colors group">
+        <div class="w-12 h-12 bg-forge-500/10 rounded-xl flex items-center justify-center mb-6 group-hover:bg-forge-500/20 transition-colors">
+          <svg class="w-6 h-6 text-forge-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+        </div>
+        <h3 class="font-display text-2xl tracking-wide text-white mb-3">ADMIN</h3>
+        <p class="text-iron-400 text-sm leading-relaxed">Full gym oversight. Manage members, trainers, and platform settings from a powerful admin dashboard.</p>
+      </div>
+      <div class="bg-iron-900 border border-iron-700 rounded-2xl p-8 hover:border-forge-500/50 transition-colors group">
+        <div class="w-12 h-12 bg-forge-500/10 rounded-xl flex items-center justify-center mb-6 group-hover:bg-forge-500/20 transition-colors">
+          <svg class="w-6 h-6 text-forge-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        </div>
+        <h3 class="font-display text-2xl tracking-wide text-white mb-3">TRAINER</h3>
+        <p class="text-iron-400 text-sm leading-relaxed">View your assigned members, track their progress, and manage training plans all in one place.</p>
+      </div>
+      <div class="bg-iron-900 border border-iron-700 rounded-2xl p-8 hover:border-forge-500/50 transition-colors group">
+        <div class="w-12 h-12 bg-forge-500/10 rounded-xl flex items-center justify-center mb-6 group-hover:bg-forge-500/20 transition-colors">
+          <svg class="w-6 h-6 text-forge-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+        </div>
+        <h3 class="font-display text-2xl tracking-wide text-white mb-3">MEMBER</h3>
+        <p class="text-iron-400 text-sm leading-relaxed">Track your fitness journey, update your stats, connect with trainers, and hit your goals.</p>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

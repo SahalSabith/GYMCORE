@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block title %}Trainer Assignments — IronForge{% endblock %}
+{% block content %}
+<div class="mb-6 flex items-center justify-between">
+  <div>
+    <h1 class="text-3xl font-display tracking-widest text-white">ASSIGNMENTS</h1>
+    <p class="text-gray-400 text-sm mt-1">Trainer–Member pairings</p>
+  </div>
+  <a href="{% url 'trainers:assign' %}" class="btn-primary px-4 py-2 rounded-lg text-sm font-semibold">+ New Assignment</a>
+</div>
+
+<div class="bg-surface-card border border-surface-border rounded-xl overflow-hidden">
+  <div class="overflow-x-auto">
+    <table class="w-full text-sm">
+      <thead><tr class="border-b border-surface-border">
+        <th class="text-left px-5 py-3 text-xs font-semibold text-gray-500 uppercase tracking-widest">Trainer</th>
+        <th class="text-left px-5 py-3 text-xs font-semibold text-gray-500 uppercase tracking-widest">Member</th>
+        <th class="text-left px-5 py-3 text-xs font-semibold text-gray-500 uppercase tracking-widest">Assigned</th>
+        <th class="px-5 py-3"></th>
+      </tr></thead>
+      <tbody class="divide-y divide-surface-border/50">
+        {% for a in assignments %}
+        <tr class="hover:bg-surface/50 transition-colors">
+          <td class="px-5 py-3.5 font-medium text-white">{{ a.trainer.get_full_name }}</td>
+          <td class="px-5 py-3.5 text-gray-300">{{ a.member.get_full_name }}</td>
+          <td class="px-5 py-3.5 text-gray-500">{{ a.assigned_at|date:"M d, Y" }}</td>
+          <td class="px-5 py-3.5 text-right">
+            <a href="{% url 'trainers:delete_assignment' a.pk %}" class="text-red-400 hover:text-red-300 text-xs font-medium">Remove</a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="4" class="px-5 py-10 text-center text-gray-500">No assignments yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

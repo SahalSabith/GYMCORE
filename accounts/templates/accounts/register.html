@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% block title %}Create Account — IronForge{% endblock %}
+
+{% block auth_content %}
+<div class="min-h-screen flex items-center justify-center px-4 py-16">
+  <div class="w-full max-w-lg">
+    <div class="text-center mb-8">
+      <h1 class="font-display text-5xl tracking-wider text-white mb-2">JOIN THE FORGE</h1>
+      <p class="text-iron-400 text-sm">Create your account and start your journey</p>
+    </div>
+
+    <div class="bg-iron-800 border border-iron-700 rounded-2xl p-8">
+      <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+          <div class="mb-5 p-3 bg-red-900/40 border border-red-700 rounded-lg">
+            {% for error in form.non_field_errors %}
+              <p class="text-red-400 text-sm">{{ error }}</p>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-iron-300 mb-1.5">First Name <span class="text-forge-400">*</span></label>
+            <input type="text" name="first_name" value="{{ form.first_name.value|default:'' }}" required
+              class="block w-full bg-iron-700 border border-iron-600 rounded-lg px-4 py-3 text-sm text-iron-100 placeholder-iron-500 focus:ring-2 focus:ring-forge-500 focus:border-transparent">
+            {% for e in form.first_name.errors %}<p class="mt-1 text-xs text-red-400">{{ e }}</p>{% endfor %}
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-iron-300 mb-1.5">Last Name <span class="text-forge-400">*</span></label>
+            <input type="text" name="last_name" value="{{ form.last_name.value|default:'' }}" required
+              class="block w-full bg-iron-700 border border-iron-600 rounded-lg px-4 py-3 text-sm text-iron-100 placeholder-iron-500 focus:ring-2 focus:ring-forge-500 focus:border-transparent">
+            {% for e in form.last_name.errors %}<p class="mt-1 text-xs text-red-400">{{ e }}</p>{% endfor %}
+          </div>
+        </div>
+
+        <div class="mt-4">
+          <label class="block text-sm font-medium text-iron-300 mb-1.5">Email <span class="text-forge-400">*</span></label>
+          <input type="email" name="email" value="{{ form.email.value|default:'' }}" required placeholder="you@example.com"
+            class="block w-full bg-iron-700 border border-iron-600 rounded-lg px-4 py-3 text-sm text-iron-100 placeholder-iron-500 focus:ring-2 focus:ring-forge-500 focus:border-transparent">
+          {% for e in form.email.errors %}<p class="mt-1 text-xs text-red-400">{{ e }}</p>{% endfor %}
+        </div>
+
+        <div class="mt-4">
+          <label class="block text-sm font-medium text-iron-300 mb-1.5">Phone Number</label>
+          <input type="text" name="phone_number" value="{{ form.phone_number.value|default:'' }}" placeholder="+1234567890"
+            class="block w-full bg-iron-700 border border-iron-600 rounded-lg px-4 py-3 text-sm text-iron-100 placeholder-iron-500 focus:ring-2 focus:ring-forge-500 focus:border-transparent">
+          {% for e in form.phone_number.errors %}<p class="mt-1 text-xs text-red-400">{{ e }}</p>{% endfor %}
+        </div>
+
+        <div class="mt-4">
+          <label class="block text-sm font-medium text-iron-300 mb-1.5">I am a <span class="text-forge-400">*</span></label>
+          <select name="role" class="block w-full bg-iron-700 border border-iron-600 rounded-lg px-4 py-3 text-sm text-iron-100 focus:ring-2 focus:ring-forge-500 focus:border-transparent">
+            <option value="MEMBER">Member</option>
+            <option value="TRAINER">Trainer</option>
+          </select>
+        </div>
+
+        <div class="mt-4">
+          <label class="block text-sm font-medium text-iron-300 mb-1.5">Password <span class="text-forge-400">*</span></label>
+          <input type="password" name="password" required placeholder="Min. 8 characters"
+            class="block w-full bg-iron-700 border border-iron-600 rounded-lg px-4 py-3 text-sm text-iron-100 placeholder-iron-500 focus:ring-2 focus:ring-forge-500 focus:border-transparent">
+          {% for e in form.password.errors %}<p class="mt-1 text-xs text-red-400">{{ e }}</p>{% endfor %}
+        </div>
+
+        <div class="mt-4">
+          <label class="block text-sm font-medium text-iron-300 mb-1.5">Confirm Password <span class="text-forge-400">*</span></label>
+          <input type="password" name="password_confirm" required placeholder="Repeat your password"
+            class="block w-full bg-iron-700 border border-iron-600 rounded-lg px-4 py-3 text-sm text-iron-100 placeholder-iron-500 focus:ring-2 focus:ring-forge-500 focus:border-transparent">
+          {% for e in form.password_confirm.errors %}<p class="mt-1 text-xs text-red-400">{{ e }}</p>{% endfor %}
+        </div>
+
+        <button type="submit" class="w-full bg-forge-500 hover:bg-forge-600 text-white font-semibold py-3.5 rounded-xl transition-all hover:scale-[1.01] mt-6">
+          Create Account
+        </button>
+      </form>
+
+      <p class="text-center text-iron-400 text-sm mt-6">
+        Already have an account?
+        <a href="{% url 'accounts:login' %}" class="text-forge-400 hover:text-forge-300 font-medium ml-1">Sign in</a>
+      </p>
+    </div>
+  </div>
+</div>
+{% endblock %}

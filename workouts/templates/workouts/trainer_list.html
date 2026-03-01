@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block title %}My Workout Plans{% endblock %}
+{% block content %}
+<div>
+  <div class="flex items-center justify-between mb-8">
+    <div>
+      <p class="text-iron-500 text-xs uppercase tracking-widest">Trainer</p>
+      <h1 class="font-display text-4xl tracking-wider text-white mt-1">WORKOUT PLANS</h1>
+    </div>
+    <a href="{% url 'workouts:create' %}" class="inline-flex items-center gap-2 bg-forge-500 hover:bg-forge-600 text-white font-semibold px-5 py-2.5 rounded-xl transition-colors text-sm">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+      New Plan
+    </a>
+  </div>
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+    {% for plan in plans %}
+    <a href="{% url 'workouts:detail' plan.pk %}" class="bg-iron-800 border border-iron-700 hover:border-forge-500/50 rounded-2xl p-6 transition-colors block group">
+      <div class="flex items-start justify-between mb-3">
+        <h3 class="font-semibold text-white group-hover:text-forge-400 transition-colors">{{ plan.title }}</h3>
+        <span class="text-xs px-2 py-0.5 rounded-full {% if plan.is_active %}bg-green-500/20 text-green-400{% else %}bg-iron-700 text-iron-500{% endif %}">{{ plan.is_active|yesno:"Active,Inactive" }}</span>
+      </div>
+      <p class="text-iron-400 text-sm mb-3">For: {{ plan.member.get_full_name }}</p>
+      {% if plan.description %}<p class="text-iron-500 text-xs leading-relaxed">{{ plan.description|truncatechars:80 }}</p>{% endif %}
+      <p class="text-iron-600 text-xs mt-3">{{ plan.days.count }} days · Created {{ plan.created_at|date:"M d, Y" }}</p>
+    </a>
+    {% empty %}
+    <div class="col-span-3 text-center py-16 text-iron-500 bg-iron-800 rounded-2xl border border-iron-700">
+      No workout plans yet. <a href="{% url 'workouts:create' %}" class="text-forge-400 hover:underline">Create one →</a>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

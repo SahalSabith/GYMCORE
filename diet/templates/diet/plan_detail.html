@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% block title %}{{ plan.title }} — IronForge{% endblock %}
+{% block content %}
+<div class="mb-6 flex items-center justify-between">
+  <div class="flex items-center gap-3">
+    <a href="{% url 'diet:trainer_list' %}" class="text-gray-400 hover:text-white transition-colors">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+    </a>
+    <div>
+      <h1 class="text-3xl font-display tracking-widest text-white">{{ plan.title|upper }}</h1>
+      <p class="text-gray-400 text-sm">For <span class="text-white">{{ plan.member.get_full_name }}</span></p>
+    </div>
+  </div>
+</div>
+
+<!-- Macro summary -->
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+  <div class="bg-surface-card border border-surface-border rounded-xl p-4 text-center">
+    <p class="text-2xl font-display text-brand">{{ plan.calories|default:"—" }}</p>
+    <p class="text-gray-500 text-xs mt-1">kcal / day</p>
+  </div>
+  <div class="bg-surface-card border border-surface-border rounded-xl p-4 text-center">
+    <p class="text-2xl font-display text-blue-400">{{ plan.protein|default:"—" }}g</p>
+    <p class="text-gray-500 text-xs mt-1">Protein</p>
+  </div>
+  <div class="bg-surface-card border border-surface-border rounded-xl p-4 text-center">
+    <p class="text-2xl font-display text-yellow-400">{{ plan.carbs|default:"—" }}g</p>
+    <p class="text-gray-500 text-xs mt-1">Carbs</p>
+  </div>
+  <div class="bg-surface-card border border-surface-border rounded-xl p-4 text-center">
+    <p class="text-2xl font-display text-pink-400">{{ plan.fats|default:"—" }}g</p>
+    <p class="text-gray-500 text-xs mt-1">Fats</p>
+  </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+  <!-- Meals list -->
+  <div class="lg:col-span-2">
+    <h2 class="text-sm font-semibold text-gray-400 uppercase tracking-widest mb-4">Meals</h2>
+    {% if meals %}
+    <div class="space-y-3">
+      {% for meal in meals %}
+      <div class="bg-surface-card border border-surface-border rounded-xl p-5">
+        <div class="flex items-center justify-between mb-3">
+          <div class="flex items-center gap-2">
+            <span class="px-2 py-0.5 bg-brand/10 border border-brand/20 text-brand text-xs font-semibold rounded">{{ meal.get_meal_type_display }}</span>
+            {% if meal.calories %}<span class="text-xs text-gray-500">~{{ meal.calories }} kcal</span>{% endif %}
+          </div>
+          <form method="post" action="{% url 'diet:delete_meal' meal.pk %}">
+            {% csrf_token %}
+            <button type="submit" class="text-red-500 hover:text-red-400 text-xs">Remove</button>
+          </form>
+        </div>
+        <div class="space-y-1">
+          {% for item in meal.food_list %}
+          <p class="text-sm text-gray-300 flex items-start gap-2"><span class="text-brand mt-1 flex-shrink-0">•</span>{{ item }}</p>
+          {% endfor %}
+        </div>
+        {% if meal.notes %}
+        <p class="text-gray-500 text-xs mt-3 italic">{{ meal.notes }}</p>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <p class="text-gray-600 text-sm">No meals added yet. Add the first meal →</p>
+    {% endif %}
+  </div>
+
+  <!-- Add meal form -->
+  <div>
+    <h2 class="text-sm font-semibold text-gray-400 uppercase tracking-widest mb-4">Add Meal</h2>
+    <div class="bg-surface-card border border-surface-border rounded-xl p-5">
+      <form method="post" action="{% url 'diet:add_meal' plan.pk %}">
+        {% csrf_token %}
+        {% for field in meal_form %}
+        <div class="mb-4">
+          <label class="block text-xs font-medium text-gray-400 mb-1">{{ field.label }}</label>
+          {{ field }}
+          {% for e in field.errors %}<p class="text-red-400 text-xs mt-1">{{ e }}</p>{% endfor %}
+        </div>
+        {% endfor %}
+        <button type="submit" class="w-full btn-primary py-2.5 rounded-lg text-sm font-semibold">Add Meal</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

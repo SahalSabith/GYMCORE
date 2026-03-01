@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}Profile — IronCore{% endblock %}
+{% block content %}
+<div class="max-w-2xl mx-auto">
+  <div class="flex items-center justify-between mb-8">
+    <h1 class="text-3xl font-display tracking-wider text-white">MY PROFILE</h1>
+    <a href="{% url 'accounts:profile_edit' %}" class="btn-primary px-5 py-2 rounded-lg text-sm font-semibold">Edit Profile</a>
+  </div>
+
+  <div class="rounded-2xl p-6 md:p-8 space-y-6" style="background:#1f2937;border:1px solid #374151;">
+    <!-- Avatar + name -->
+    <div class="flex items-center gap-5">
+      {% if profile_user.profile_photo %}
+        <img src="{{ profile_user.profile_photo.url }}" alt="avatar" class="w-20 h-20 rounded-full object-cover ring-4 ring-brand">
+      {% else %}
+        <div class="w-20 h-20 rounded-full bg-brand flex items-center justify-center text-2xl font-bold text-white ring-4 ring-brand/40">
+          {{ profile_user.first_name|first|upper }}{{ profile_user.last_name|first|upper }}
+        </div>
+      {% endif %}
+      <div>
+        <h2 class="text-xl font-bold text-white">{{ profile_user.get_full_name }}</h2>
+        <span class="inline-block mt-1 px-3 py-0.5 text-xs font-semibold rounded-full
+          {% if profile_user.role == 'ADMIN' %}bg-purple-900/60 text-purple-300
+          {% elif profile_user.role == 'TRAINER' %}bg-blue-900/60 text-blue-300
+          {% else %}bg-green-900/60 text-green-300{% endif %}">
+          {{ profile_user.role }}
+        </span>
+      </div>
+    </div>
+
+    <hr style="border-color:#374151;">
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      {% with fields=profile_user %}
+      <div>
+        <p class="text-xs text-gray-500 uppercase tracking-widest mb-1">Email</p>
+        <p class="text-sm text-gray-200">{{ profile_user.email }}</p>
+      </div>
+      <div>
+        <p class="text-xs text-gray-500 uppercase tracking-widest mb-1">Phone</p>
+        <p class="text-sm text-gray-200">{{ profile_user.phone_number|default:"—" }}</p>
+      </div>
+      <div>
+        <p class="text-xs text-gray-500 uppercase tracking-widest mb-1">Height</p>
+        <p class="text-sm text-gray-200">{% if profile_user.height %}{{ profile_user.height }} cm{% else %}—{% endif %}</p>
+      </div>
+      <div>
+        <p class="text-xs text-gray-500 uppercase tracking-widest mb-1">Weight</p>
+        <p class="text-sm text-gray-200">{% if profile_user.weight %}{{ profile_user.weight }} kg{% else %}—{% endif %}</p>
+      </div>
+      {% endwith %}
+    </div>
+
+    {% if profile_user.fitness_goal %}
+    <div>
+      <p class="text-xs text-gray-500 uppercase tracking-widest mb-2">Fitness Goal</p>
+      <p class="text-sm text-gray-300 leading-relaxed">{{ profile_user.fitness_goal }}</p>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

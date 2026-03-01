@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Edit Profile — IronCore{% endblock %}
+{% block content %}
+<div class="max-w-2xl mx-auto">
+  <div class="flex items-center justify-between mb-8">
+    <h1 class="text-3xl font-display tracking-wider text-white">EDIT PROFILE</h1>
+    <a href="{% url 'accounts:profile' %}" class="text-sm text-gray-400 hover:text-white transition-colors">← Back</a>
+  </div>
+
+  <div class="rounded-2xl p-6 md:p-8" style="background:#1f2937;border:1px solid #374151;">
+    <form method="post" enctype="multipart/form-data" class="space-y-5">
+      {% csrf_token %}
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-xs font-medium text-gray-400 uppercase tracking-widest mb-2">First Name</label>
+          <input type="text" name="first_name" value="{{ form.first_name.value|default:'' }}" class="w-full px-4 py-2.5 rounded-lg border text-sm">
+          {% if form.first_name.errors %}<p class="mt-1 text-xs text-red-400">{{ form.first_name.errors.0 }}</p>{% endif %}
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-400 uppercase tracking-widest mb-2">Last Name</label>
+          <input type="text" name="last_name" value="{{ form.last_name.value|default:'' }}" class="w-full px-4 py-2.5 rounded-lg border text-sm">
+          {% if form.last_name.errors %}<p class="mt-1 text-xs text-red-400">{{ form.last_name.errors.0 }}</p>{% endif %}
+        </div>
+      </div>
+      <div>
+        <label class="block text-xs font-medium text-gray-400 uppercase tracking-widest mb-2">Phone Number</label>
+        <input type="text" name="phone_number" value="{{ form.phone_number.value|default:'' }}" placeholder="+1 555 000 0000" class="w-full px-4 py-2.5 rounded-lg border text-sm">
+        {% if form.phone_number.errors %}<p class="mt-1 text-xs text-red-400">{{ form.phone_number.errors.0 }}</p>{% endif %}
+      </div>
+      <div>
+        <label class="block text-xs font-medium text-gray-400 uppercase tracking-widest mb-2">Profile Photo</label>
+        {% if form.instance.profile_photo %}
+          <p class="text-xs text-gray-500 mb-1">Current: {{ form.instance.profile_photo.name }}</p>
+        {% endif %}
+        <input type="file" name="profile_photo" accept="image/*" class="w-full px-4 py-2.5 rounded-lg border text-sm text-gray-300">
+      </div>
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-xs font-medium text-gray-400 uppercase tracking-widest mb-2">Height (cm)</label>
+          <input type="number" step="0.01" name="height" value="{{ form.height.value|default:'' }}" placeholder="175.00" class="w-full px-4 py-2.5 rounded-lg border text-sm">
+          {% if form.height.errors %}<p class="mt-1 text-xs text-red-400">{{ form.height.errors.0 }}</p>{% endif %}
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-400 uppercase tracking-widest mb-2">Weight (kg)</label>
+          <input type="number" step="0.01" name="weight" value="{{ form.weight.value|default:'' }}" placeholder="75.00" class="w-full px-4 py-2.5 rounded-lg border text-sm">
+          {% if form.weight.errors %}<p class="mt-1 text-xs text-red-400">{{ form.weight.errors.0 }}</p>{% endif %}
+        </div>
+      </div>
+      <div>
+        <label class="block text-xs font-medium text-gray-400 uppercase tracking-widest mb-2">Fitness Goal</label>
+        <textarea name="fitness_goal" rows="3" placeholder="e.g. Build muscle, lose 10kg by summer..." class="w-full px-4 py-2.5 rounded-lg border text-sm resize-none">{{ form.fitness_goal.value|default:'' }}</textarea>
+      </div>
+      <div class="flex gap-3 pt-2">
+        <button type="submit" class="btn-primary px-8 py-3 rounded-lg font-semibold text-sm">Save Changes</button>
+        <a href="{% url 'accounts:profile' %}" class="px-8 py-3 rounded-lg font-semibold text-sm text-gray-300 hover:text-white transition-colors" style="border:1px solid #374151;">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

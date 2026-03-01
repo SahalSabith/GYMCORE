@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% block title %}Session Requests{% endblock %}
+{% block content %}
+<div>
+  <div class="mb-8">
+    <p class="text-iron-500 text-xs uppercase tracking-widest">Trainer</p>
+    <h1 class="font-display text-4xl tracking-wider text-white mt-1">SESSION REQUESTS</h1>
+  </div>
+
+  <!-- Pending -->
+  {% if pending %}
+  <div class="bg-yellow-900/20 border border-yellow-700/40 rounded-2xl overflow-hidden mb-6">
+    <div class="px-6 py-4 border-b border-yellow-700/30 flex items-center gap-2">
+      <span class="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></span>
+      <h2 class="font-semibold text-yellow-300">Pending Requests ({{ pending|length }})</h2>
+    </div>
+    <div class="divide-y divide-yellow-700/20">
+      {% for session in pending %}
+      <div class="flex items-center justify-between px-6 py-4 flex-wrap gap-3">
+        <div>
+          <p class="font-medium text-white">{{ session.member.get_full_name }}</p>
+          <p class="text-iron-400 text-sm">{{ session.date }} at {{ session.time }}</p>
+          {% if session.notes %}<p class="text-iron-500 text-xs mt-1">{{ session.notes }}</p>{% endif %}
+        </div>
+        <a href="{% url 'sessions:respond' session.pk %}" class="text-sm font-semibold bg-forge-500 hover:bg-forge-600 text-white px-4 py-2 rounded-lg transition-colors">Respond</a>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Upcoming approved -->
+  {% if upcoming %}
+  <div class="bg-iron-800 border border-green-700/30 rounded-2xl overflow-hidden mb-6">
+    <div class="px-6 py-4 border-b border-green-700/20">
+      <h2 class="font-semibold text-green-300">Upcoming Sessions ({{ upcoming|length }})</h2>
+    </div>
+    <div class="divide-y divide-iron-700/50">
+      {% for session in upcoming %}
+      <div class="flex items-center justify-between px-6 py-4 flex-wrap gap-3">
+        <div>
+          <p class="font-medium text-white">{{ session.member.get_full_name }}</p>
+          <p class="text-iron-400 text-sm">{{ session.date }} at {{ session.time }}</p>
+        </div>
+        <div class="flex items-center gap-3">
+          <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-green-500/20 text-green-400">Approved</span>
+          <a href="{% url 'sessions:respond' session.pk %}" class="text-xs text-iron-400 hover:text-white">Update</a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Past -->
+  <div class="bg-iron-800 border border-iron-700 rounded-2xl overflow-hidden">
+    <div class="px-6 py-4 border-b border-iron-700"><h2 class="font-semibold text-iron-300">Session History</h2></div>
+    <div class="divide-y divide-iron-700/50">
+      {% for session in past %}
+      <div class="flex items-center justify-between px-6 py-4">
+        <div>
+          <p class="font-medium text-iron-200">{{ session.member.get_full_name }}</p>
+          <p class="text-iron-500 text-xs">{{ session.date }} at {{ session.time }}</p>
+        </div>
+        <span class="px-2 py-0.5 rounded-full text-xs font-semibold
+          {% if session.status == 'COMPLETED' %}bg-blue-500/20 text-blue-400
+          {% elif session.status == 'REJECTED' %}bg-red-500/20 text-red-400
+          {% else %}bg-iron-700 text-iron-400{% endif %}">
+          {{ session.get_status_display }}
+        </span>
+      </div>
+      {% empty %}
+      <div class="px-6 py-8 text-center text-iron-500 text-sm">No session history yet.</div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

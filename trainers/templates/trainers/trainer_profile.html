@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% block title %}My Trainer Profile{% endblock %}
+{% block content %}
+<div>
+  <div class="flex items-center justify-between mb-8">
+    <div>
+      <p class="text-iron-500 text-xs uppercase tracking-widest">Trainer</p>
+      <h1 class="font-display text-4xl tracking-wider text-white mt-1">MY PROFILE</h1>
+    </div>
+    <a href="{% url 'trainers:my_profile_edit' %}" class="inline-flex items-center gap-2 bg-forge-500 hover:bg-forge-600 text-white font-semibold px-5 py-2.5 rounded-xl transition-colors text-sm">Edit Profile</a>
+  </div>
+
+  {% if profile %}
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+    <div class="bg-iron-800 border border-iron-700 rounded-2xl p-6">
+      <div class="flex items-center gap-4 mb-5">
+        {% if user.profile_photo %}
+          <img src="{{ user.profile_photo.url }}" class="w-16 h-16 rounded-xl object-cover">
+        {% else %}
+          <div class="w-16 h-16 rounded-xl bg-blue-500/20 flex items-center justify-center"><span class="font-display text-3xl text-blue-400">{{ user.first_name|first|upper }}</span></div>
+        {% endif %}
+        <div>
+          <h2 class="font-semibold text-white text-lg">{{ user.get_full_name }}</h2>
+          <span class="text-xs px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-400">TRAINER</span>
+        </div>
+      </div>
+      <div class="space-y-3 text-sm">
+        <div><p class="text-xs text-iron-500 uppercase tracking-widest mb-0.5">Specialization</p><p class="text-iron-200">{{ profile.specialization|default:'Not set' }}</p></div>
+        <div><p class="text-xs text-iron-500 uppercase tracking-widest mb-0.5">Experience</p><p class="text-iron-200">{{ profile.experience_years }} years</p></div>
+        <div><p class="text-xs text-iron-500 uppercase tracking-widest mb-0.5">Certifications</p><p class="text-iron-200">{{ profile.certifications|default:'None listed' }}</p></div>
+      </div>
+    </div>
+    <div class="lg:col-span-2 bg-iron-800 border border-iron-700 rounded-2xl p-6">
+      <h3 class="text-sm font-semibold text-iron-400 uppercase tracking-widest mb-3">Bio</h3>
+      <p class="text-iron-300 leading-relaxed">{{ profile.bio|default:'No bio added yet.' }}</p>
+    </div>
+  </div>
+  {% else %}
+  <div class="bg-iron-800 border border-forge-500/30 rounded-2xl p-8 text-center mb-8">
+    <p class="text-iron-400 mb-4">You haven't set up your trainer profile yet.</p>
+    <a href="{% url 'trainers:my_profile_edit' %}" class="inline-flex items-center gap-2 bg-forge-500 hover:bg-forge-600 text-white font-semibold px-5 py-2.5 rounded-xl transition-colors text-sm">Set Up Profile</a>
+  </div>
+  {% endif %}
+
+  <div class="bg-iron-800 border border-iron-700 rounded-2xl overflow-hidden">
+    <div class="px-6 py-4 border-b border-iron-700">
+      <h2 class="font-semibold text-white">My Members ({{ assignments|length }})</h2>
+    </div>
+    <div class="divide-y divide-iron-700/50">
+      {% for a in assignments %}
+      <div class="flex items-center gap-4 px-6 py-4">
+        {% if a.member.profile_photo %}<img src="{{ a.member.profile_photo.url }}" class="w-9 h-9 rounded-full object-cover">
+        {% else %}<div class="w-9 h-9 rounded-full bg-iron-600 flex items-center justify-center text-xs font-bold text-iron-300">{{ a.member.first_name|first|upper }}</div>{% endif %}
+        <div class="flex-1">
+          <p class="font-medium text-iron-100">{{ a.member.get_full_name }}</p>
+          <p class="text-iron-500 text-xs">{{ a.member.email }}</p>
+        </div>
+        {% if a.member.fitness_goal %}<p class="text-iron-400 text-xs max-w-xs truncate hidden sm:block">{{ a.member.fitness_goal }}</p>{% endif %}
+      </div>
+      {% empty %}
+      <div class="px-6 py-8 text-center text-iron-500 text-sm">No members assigned yet.</div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

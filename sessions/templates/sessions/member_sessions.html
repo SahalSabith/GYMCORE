@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% block title %}My Sessions — IronCore{% endblock %}
+{% block content %}
+<div class="max-w-4xl mx-auto">
+  <div class="flex items-center justify-between mb-8">
+    <div>
+      <h1 class="font-display text-4xl tracking-widest text-white">MY SESSIONS</h1>
+      <p class="text-gray-400 mt-1">Your personal training session requests</p>
+    </div>
+    <a href="{% url 'sessions:book' %}" class="btn-primary px-5 py-2.5 rounded-xl text-sm font-semibold">+ Book Session</a>
+  </div>
+
+  <div class="bg-surface-card border border-surface-border rounded-2xl overflow-hidden">
+    <table class="w-full text-sm">
+      <thead>
+        <tr class="border-b border-surface-border">
+          <th class="text-left px-6 py-3 text-xs text-gray-500 uppercase tracking-widest">Trainer</th>
+          <th class="text-left px-6 py-3 text-xs text-gray-500 uppercase tracking-widest">Date & Time</th>
+          <th class="text-left px-6 py-3 text-xs text-gray-500 uppercase tracking-widest">Status</th>
+          <th class="px-6 py-3"></th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-surface-border">
+        {% for s in sessions %}
+        <tr class="hover:bg-surface/40">
+          <td class="px-6 py-3.5 text-gray-200 font-medium">{{ s.trainer.get_full_name }}</td>
+          <td class="px-6 py-3.5">
+            <p class="text-gray-200">{{ s.date|date:"M d, Y" }}</p>
+            <p class="text-gray-500 text-xs">{{ s.time|time:"g:i A" }}</p>
+          </td>
+          <td class="px-6 py-3.5">
+            <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold
+              {% if s.status == 'PENDING' %}bg-yellow-900/40 text-yellow-400
+              {% elif s.status == 'APPROVED' %}bg-green-900/40 text-green-400
+              {% elif s.status == 'REJECTED' %}bg-red-900/40 text-red-400
+              {% elif s.status == 'COMPLETED' %}bg-blue-900/40 text-blue-400
+              {% else %}bg-gray-700 text-gray-400{% endif %}">
+              {{ s.get_status_display }}
+            </span>
+          </td>
+          <td class="px-6 py-3.5">
+            {% if s.status == 'PENDING' %}
+            <form method="post" action="{% url 'sessions:cancel' s.pk %}">
+              {% csrf_token %}
+              <button type="submit" class="text-xs text-red-400 hover:text-red-300">Cancel</button>
+            </form>
+            {% elif s.trainer_notes %}
+            <span class="text-xs text-gray-500 italic">{{ s.trainer_notes|truncatechars:40 }}</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="4" class="px-6 py-12 text-center text-gray-500">No sessions yet. <a href="{% url 'sessions:book' %}" class="text-brand hover:underline">Book one →</a></td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,43 @@
+<nav class="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 md:px-6 h-16"
+     style="background:#0d131e; border-bottom:1px solid #1f2937;">
+    <!-- Brand -->
+    <div class="flex items-center gap-3">
+        <button id="sidebar-toggle" class="md:hidden text-gray-400 hover:text-white">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+            </svg>
+        </button>
+        <span class="font-display text-2xl tracking-widest text-brand">IRONCORE</span>
+        <span class="hidden sm:inline text-xs text-gray-500 uppercase tracking-widest">Gym Platform</span>
+    </div>
+
+    <!-- User menu -->
+    <div class="flex items-center gap-3">
+        <div class="hidden sm:flex items-center gap-2">
+            {% if request.user.profile_photo %}
+                <img src="{{ request.user.profile_photo.url }}" alt="avatar"
+                     class="w-8 h-8 rounded-full object-cover ring-2 ring-brand">
+            {% else %}
+                <div class="w-8 h-8 rounded-full bg-brand flex items-center justify-center text-sm font-bold text-white">
+                    {{ request.user.first_name|first|upper }}{{ request.user.last_name|first|upper }}
+                </div>
+            {% endif %}
+            <div class="leading-tight">
+                <p class="text-sm font-medium text-gray-200">{{ request.user.get_full_name }}</p>
+                <p class="text-xs text-gray-500">{{ request.user.role }}</p>
+            </div>
+        </div>
+        <form method="post" action="{% url 'accounts:logout' %}">
+            {% csrf_token %}
+            <button type="submit" class="text-xs text-gray-400 hover:text-brand transition-colors px-2 py-1 rounded">
+                Logout
+            </button>
+        </form>
+    </div>
+</nav>
+
+<script>
+    document.getElementById('sidebar-toggle')?.addEventListener('click', () => {
+        document.getElementById('sidebar').classList.toggle('-translate-x-full');
+    });
+</script>

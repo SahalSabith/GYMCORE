@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% block title %}My Diet Plan — IronForge{% endblock %}
+{% block content %}
+<div class="mb-6">
+  <h1 class="text-3xl font-display tracking-widest text-white">MY DIET PLAN</h1>
+  <p class="text-gray-400 text-sm mt-1">Your nutrition guide from your trainer</p>
+</div>
+
+{% if plans %}
+  {% for plan in plans %}
+  <div class="mb-8">
+    <div class="flex items-center gap-3 mb-4">
+      <h2 class="text-xl font-bold text-white">{{ plan.title }}</h2>
+      <span class="text-gray-500 text-sm">by {{ plan.trainer.get_full_name }}</span>
+    </div>
+
+    <!-- Macros -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+      <div class="bg-surface-card border border-surface-border rounded-xl p-4 text-center">
+        <p class="text-xl font-display text-brand">{{ plan.calories|default:"—" }}</p>
+        <p class="text-gray-500 text-xs mt-0.5">kcal / day</p>
+      </div>
+      <div class="bg-surface-card border border-surface-border rounded-xl p-4 text-center">
+        <p class="text-xl font-display text-blue-400">{{ plan.protein|default:"—" }}g</p>
+        <p class="text-gray-500 text-xs mt-0.5">Protein</p>
+      </div>
+      <div class="bg-surface-card border border-surface-border rounded-xl p-4 text-center">
+        <p class="text-xl font-display text-yellow-400">{{ plan.carbs|default:"—" }}g</p>
+        <p class="text-gray-500 text-xs mt-0.5">Carbs</p>
+      </div>
+      <div class="bg-surface-card border border-surface-border rounded-xl p-4 text-center">
+        <p class="text-xl font-display text-pink-400">{{ plan.fats|default:"—" }}g</p>
+        <p class="text-gray-500 text-xs mt-0.5">Fats</p>
+      </div>
+    </div>
+
+    <!-- Meals -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      {% for meal in plan.meals.all %}
+      <div class="bg-surface-card border border-surface-border rounded-xl overflow-hidden">
+        <div class="px-4 py-3 bg-brand/5 border-b border-surface-border flex items-center justify-between">
+          <span class="font-semibold text-brand text-sm">{{ meal.get_meal_type_display }}</span>
+          {% if meal.calories %}<span class="text-xs text-gray-500">{{ meal.calories }} kcal</span>{% endif %}
+        </div>
+        <div class="p-4 space-y-1.5">
+          {% for item in meal.food_list %}
+          <p class="text-sm text-gray-300 flex items-start gap-2"><span class="text-brand/60 flex-shrink-0 mt-1">•</span>{{ item }}</p>
+          {% endfor %}
+          {% if meal.notes %}
+          <p class="text-gray-500 text-xs mt-2 pt-2 border-t border-surface-border italic">{{ meal.notes }}</p>
+          {% endif %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    {% if plan.notes %}<p class="text-gray-400 text-sm mt-4 p-4 bg-surface-card border border-surface-border rounded-xl">{{ plan.notes }}</p>{% endif %}
+  </div>
+  {% endfor %}
+{% else %}
+  <div class="bg-surface-card border border-surface-border rounded-xl p-14 text-center">
+    <p class="text-gray-500 text-lg mb-2">No diet plan assigned yet</p>
+    <p class="text-gray-600 text-sm">Your trainer will create and assign a diet plan for you.</p>
+  </div>
+{% endif %}
+{% endblock %}

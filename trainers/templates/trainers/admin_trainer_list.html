@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% block title %}Trainer Management — Admin{% endblock %}
+{% block content %}
+<div>
+  <div class="flex items-center justify-between mb-8">
+    <div>
+      <p class="text-iron-500 text-xs uppercase tracking-widest">Admin Panel</p>
+      <h1 class="font-display text-4xl tracking-wider text-white mt-1">TRAINER MANAGEMENT</h1>
+    </div>
+    <div class="flex gap-3">
+      <a href="{% url 'trainers:profile_create' %}" class="inline-flex items-center gap-2 bg-iron-700 hover:bg-iron-600 text-white font-semibold px-4 py-2.5 rounded-xl transition-colors text-sm">Create Profile</a>
+      <a href="{% url 'trainers:assign' %}" class="inline-flex items-center gap-2 bg-forge-500 hover:bg-forge-600 text-white font-semibold px-4 py-2.5 rounded-xl transition-colors text-sm">Assign Trainer</a>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-10">
+    {% for trainer in trainers %}
+    <div class="bg-iron-800 border border-iron-700 rounded-2xl p-6">
+      <div class="flex items-center gap-3 mb-4">
+        {% if trainer.profile_photo %}
+          <img src="{{ trainer.profile_photo.url }}" class="w-12 h-12 rounded-xl object-cover">
+        {% else %}
+          <div class="w-12 h-12 rounded-xl bg-blue-500/20 flex items-center justify-center font-display text-xl text-blue-400">{{ trainer.first_name|first|upper }}</div>
+        {% endif %}
+        <div>
+          <h3 class="font-semibold text-white">{{ trainer.get_full_name }}</h3>
+          <p class="text-iron-400 text-xs">{{ trainer.email }}</p>
+        </div>
+      </div>
+      {% if trainer.trainer_profile %}
+        <p class="text-iron-400 text-sm mb-1">{{ trainer.trainer_profile.specialization|default:'No specialization set' }}</p>
+        <p class="text-iron-500 text-xs">{{ trainer.trainer_profile.experience_years }} yrs experience</p>
+        <a href="{% url 'trainers:profile_edit' trainer.trainer_profile.pk %}" class="mt-4 block text-center text-xs font-medium py-2 rounded-lg bg-iron-700 hover:bg-iron-600 text-iron-300 hover:text-white transition-colors">Edit Profile</a>
+      {% else %}
+        <p class="text-iron-500 text-xs italic mb-4">No profile created yet</p>
+        <a href="{% url 'trainers:profile_create' %}" class="block text-center text-xs font-medium py-2 rounded-lg bg-forge-500/10 hover:bg-forge-500/20 text-forge-400 transition-colors">Create Profile</a>
+      {% endif %}
+    </div>
+    {% empty %}
+    <div class="col-span-3 text-center py-16 text-iron-500 bg-iron-800 rounded-2xl border border-iron-700">No trainers registered yet.</div>
+    {% endfor %}
+  </div>
+
+  <div class="bg-iron-800 border border-iron-700 rounded-2xl overflow-hidden">
+    <div class="px-6 py-4 border-b border-iron-700"><h2 class="font-semibold text-white">Active Assignments</h2></div>
+    <div class="divide-y divide-iron-700/50">
+      {% for a in assignments %}
+      <div class="flex items-center justify-between px-6 py-4 hover:bg-iron-700/30 transition-colors">
+        <div class="flex items-center gap-6">
+          <div><p class="text-xs text-iron-500 mb-0.5">Trainer</p><p class="text-iron-200 font-medium text-sm">{{ a.trainer.get_full_name }}</p></div>
+          <svg class="w-4 h-4 text-forge-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+          <div><p class="text-xs text-iron-500 mb-0.5">Member</p><p class="text-iron-200 font-medium text-sm">{{ a.member.get_full_name }}</p></div>
+        </div>
+        <div class="flex items-center gap-3">
+          <span class="text-iron-500 text-xs">Since {{ a.assigned_on }}</span>
+          <a href="{% url 'trainers:assign_delete' a.pk %}" class="text-xs text-red-400 hover:text-red-300 font-medium">Remove</a>
+        </div>
+      </div>
+      {% empty %}
+      <div class="px-6 py-8 text-center text-iron-500 text-sm">No active assignments.</div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

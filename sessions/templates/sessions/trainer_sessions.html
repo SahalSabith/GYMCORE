@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block title %}Session Requests — IronCore{% endblock %}
+{% block content %}
+<div class="max-w-4xl mx-auto">
+  <div class="mb-8">
+    <h1 class="font-display text-4xl tracking-widest text-white">SESSION REQUESTS</h1>
+    <p class="text-gray-400 mt-1">Manage member session bookings</p>
+  </div>
+
+  {% regroup sessions by get_status_display as grouped_sessions %}
+  {% for group in grouped_sessions %}
+  <div class="mb-6">
+    <h2 class="text-xs text-gray-500 uppercase tracking-widest font-semibold mb-3">{{ group.grouper }}</h2>
+    <div class="bg-surface-card border border-surface-border rounded-2xl overflow-hidden">
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="border-b border-surface-border">
+            <th class="text-left px-6 py-3 text-xs text-gray-500 uppercase tracking-widest">Member</th>
+            <th class="text-left px-6 py-3 text-xs text-gray-500 uppercase tracking-widest">Date & Time</th>
+            <th class="text-left px-6 py-3 text-xs text-gray-500 uppercase tracking-widest">Notes</th>
+            <th class="px-6 py-3"></th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-surface-border">
+          {% for s in group.list %}
+          <tr class="hover:bg-surface/40">
+            <td class="px-6 py-3.5">
+              <p class="text-gray-200 font-medium">{{ s.member.get_full_name }}</p>
+              <p class="text-gray-500 text-xs">{{ s.member.email }}</p>
+            </td>
+            <td class="px-6 py-3.5">
+              <p class="text-gray-200">{{ s.date|date:"M d, Y" }}</p>
+              <p class="text-gray-500 text-xs">{{ s.time|time:"g:i A" }}</p>
+            </td>
+            <td class="px-6 py-3.5 text-gray-500 text-xs max-w-xs">{{ s.notes|truncatechars:60|default:'—' }}</td>
+            <td class="px-6 py-3.5">
+              {% if s.status == 'PENDING' or s.status == 'APPROVED' %}
+              <a href="{% url 'sessions:respond' s.pk %}" class="text-sm text-brand hover:underline">Respond</a>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% empty %}
+  <div class="bg-surface-card border border-surface-border rounded-2xl p-16 text-center text-gray-500">
+    No session requests yet.
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

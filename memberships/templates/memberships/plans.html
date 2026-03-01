@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% block title %}Membership Plans — IronCore{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto">
+
+  <div class="mb-8">
+    <h1 class="font-display text-4xl tracking-widest text-white">MEMBERSHIP PLANS</h1>
+    <p class="text-gray-400 mt-1">Choose a plan to unlock full gym access.</p>
+  </div>
+
+  {% if active_sub %}
+  <div class="mb-8 p-4 rounded-xl border {% if active_sub.is_expired %}border-red-700 bg-red-900/20{% else %}border-green-700 bg-green-900/20{% endif %}">
+    <div class="flex items-center justify-between flex-wrap gap-3">
+      <div>
+        <p class="text-sm font-semibold {% if active_sub.is_expired %}text-red-400{% else %}text-green-400{% endif %}">
+          {% if active_sub.is_expired %}⚠ Membership Expired{% else %}✓ Active Membership{% endif %}
+        </p>
+        <p class="text-white font-medium mt-0.5">{{ active_sub.plan.name }}</p>
+        <p class="text-gray-400 text-xs mt-0.5">Expires: {{ active_sub.end_date|date:"M d, Y" }}
+          {% if not active_sub.is_expired %} · {{ active_sub.days_remaining }} day{{ active_sub.days_remaining|pluralize }} left{% endif %}
+        </p>
+      </div>
+      <a href="{% url 'memberships:my_subscription' %}" class="text-sm text-brand hover:underline">View history →</a>
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    {% for plan in plans %}
+    <div class="bg-surface-card border border-surface-border rounded-2xl p-6 flex flex-col hover:border-brand/40 transition-colors">
+      <div class="mb-4">
+        <p class="text-xs text-gray-500 uppercase tracking-widest">{{ plan.get_duration_days_display }}</p>
+        <h2 class="text-xl font-bold text-white mt-1">{{ plan.name }}</h2>
+      </div>
+      <div class="mb-4">
+        <span class="font-display text-5xl text-brand">${{ plan.price }}</span>
+      </div>
+      {% if plan.description %}
+      <p class="text-gray-400 text-sm leading-relaxed mb-4 flex-1">{{ plan.description }}</p>
+      {% else %}
+      <div class="flex-1"></div>
+      {% endif %}
+      {% if request.user.role == 'MEMBER' %}
+      <a href="{% url 'memberships:subscribe' plan.pk %}"
+         class="btn-primary mt-4 block text-center py-3 rounded-xl font-semibold text-sm">
+        Subscribe Now
+      </a>
+      {% else %}
+      <div class="mt-4 py-3 text-center text-xs text-gray-600 border border-surface-border rounded-xl">
+        Only members can subscribe
+      </div>
+      {% endif %}
+    </div>
+    {% empty %}
+    <div class="col-span-3 text-center py-16 text-gray-500">No plans available yet.</div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% block title %}Create Diet Plan — IronCore{% endblock %}
+{% block content %}
+<div class="max-w-3xl mx-auto">
+  <a href="{% url 'diet:trainer_plans' %}" class="inline-flex items-center gap-2 text-gray-400 hover:text-white text-sm mb-6 transition-colors">
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+    My Plans
+  </a>
+  <div class="bg-surface-card border border-surface-border rounded-2xl p-8">
+    <h1 class="font-display text-3xl tracking-widest text-white mb-6">CREATE DIET PLAN</h1>
+    <form method="post">
+      {% csrf_token %}
+
+      {% for field in form %}
+      <div class="mb-5">
+        <label class="block text-sm font-medium text-gray-300 mb-1.5">{{ field.label }}</label>
+        {{ field }}
+        {% for e in field.errors %}<p class="text-red-400 text-xs mt-1">{{ e }}</p>{% endfor %}
+      </div>
+      {% endfor %}
+
+      <div class="border-t border-surface-border pt-6 mt-6">
+        <h2 class="text-white font-semibold mb-5">Meals</h2>
+        {{ formset.management_form }}
+        <div class="space-y-5">
+          {% for f in formset %}
+          <div class="bg-surface border border-surface-border rounded-xl p-5 {% if f.DELETE.value %}opacity-40{% endif %}">
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs text-gray-500 mb-1">Meal Type</label>
+                {{ f.meal_type }}
+              </div>
+              <div>
+                <label class="block text-xs text-gray-500 mb-1">Calories</label>
+                {{ f.calories }}
+              </div>
+              <div class="col-span-2">
+                <label class="block text-xs text-gray-500 mb-1">Food Items</label>
+                {{ f.food_items }}
+              </div>
+              <div class="col-span-2">
+                <label class="block text-xs text-gray-500 mb-1">Notes</label>
+                {{ f.notes }}
+              </div>
+              <div class="flex items-center justify-between col-span-2">
+                <div>
+                  <label class="block text-xs text-gray-500 mb-1">Order</label>
+                  {{ f.order }}
+                </div>
+                {% if formset.can_delete %}
+                <label class="flex items-center gap-1.5 text-xs text-red-400 cursor-pointer mt-4">
+                  {{ f.DELETE }} Remove this meal
+                </label>
+                {% endif %}
+              </div>
+            </div>
+            {{ f.id }}
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <button type="submit" class="btn-primary w-full py-3.5 rounded-xl font-semibold mt-6">Save Diet Plan</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

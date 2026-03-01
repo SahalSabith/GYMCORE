@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}IronCore Gym{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            DEFAULT: '#f97316',
+                            dark: '#ea6c0a',
+                        },
+                        surface: {
+                            DEFAULT: '#111827',
+                            card: '#1f2937',
+                            border: '#374151',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                        display: ['"Bebas Neue"', 'Impact', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { background-color: #111827; color: #f9fafb; }
+        .sidebar-link:hover, .sidebar-link.active { background: rgba(249,115,22,0.12); border-left: 3px solid #f97316; }
+        .sidebar-link { border-left: 3px solid transparent; }
+        input, select, textarea {
+            background-color: #1f2937 !important;
+            border-color: #374151 !important;
+            color: #f9fafb !important;
+        }
+        input::placeholder, textarea::placeholder { color: #6b7280 !important; }
+        input:focus, select:focus, textarea:focus {
+            border-color: #f97316 !important;
+            box-shadow: 0 0 0 2px rgba(249,115,22,0.2) !important;
+            outline: none;
+        }
+        .btn-primary { background: #f97316; color: #fff; transition: background .2s; }
+        .btn-primary:hover { background: #ea6c0a; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #1f2937; }
+        ::-webkit-scrollbar-thumb { background: #374151; border-radius: 3px; }
+    </style>
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="font-sans antialiased">
+
+{% if request.user.is_authenticated %}
+    {% include "partials/navbar.html" %}
+    <div class="flex min-h-screen pt-16">
+        {% include "partials/sidebar.html" %}
+        <main class="flex-1 ml-0 md:ml-64 p-6 lg:p-8">
+            {% include "partials/messages.html" %}
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+{% else %}
+    {% block auth_content %}{% endblock %}
+{% endif %}
+
+</body>
+</html>

@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block title %}{{ plan.title }} — IronForge{% endblock %}
+{% block content %}
+<div class="mb-6 flex items-center justify-between">
+  <div class="flex items-center gap-3">
+    <a href="{% url 'workouts:trainer_plans' %}" class="text-gray-400 hover:text-white transition-colors">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+    </a>
+    <div>
+      <h1 class="text-3xl font-display tracking-widest text-white">{{ plan.title|upper }}</h1>
+      <p class="text-gray-400 text-sm">Assigned to <span class="text-white">{{ plan.member.get_full_name }}</span></p>
+    </div>
+  </div>
+  <a href="{% url 'workouts:add_day' plan.pk %}" class="btn-primary px-4 py-2 rounded-lg text-sm font-semibold">+ Add Day</a>
+</div>
+
+{% if plan.description %}
+<div class="bg-surface-card border border-surface-border rounded-xl p-4 mb-6">
+  <p class="text-gray-300 text-sm">{{ plan.description }}</p>
+</div>
+{% endif %}
+
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+  {% for day in days %}
+  <div class="bg-surface-card border border-surface-border rounded-xl overflow-hidden">
+    <div class="px-4 py-3 bg-brand/10 border-b border-surface-border flex items-center justify-between">
+      <h3 class="font-bold text-brand">{{ day.get_day_of_week_display }}</h3>
+      {% if day.notes %}<span class="text-xs text-gray-400">{{ day.notes }}</span>{% endif %}
+    </div>
+    <div class="p-4 space-y-2">
+      {% for ex in day.exercises.all %}
+      <div class="p-2.5 bg-surface rounded-lg">
+        <p class="text-sm font-medium text-white">{{ ex.name }}</p>
+        <p class="text-xs text-gray-500 mt-0.5">{{ ex.sets }} sets × {{ ex.reps }} reps</p>
+        {% if ex.instructions %}
+          <p class="text-xs text-gray-600 mt-1 italic">{{ ex.instructions|truncatewords:10 }}</p>
+        {% endif %}
+      </div>
+      {% empty %}
+      <p class="text-gray-600 text-xs">No exercises added.</p>
+      {% endfor %}
+    </div>
+  </div>
+  {% empty %}
+  <div class="col-span-full text-center py-12 text-gray-500">
+    No workout days yet. <a href="{% url 'workouts:add_day' plan.pk %}" class="text-brand hover:underline">Add the first day.</a>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% block title %}My Workouts — IronForge{% endblock %}
+{% block extra_head %}
+<style>
+  .exercise-card.done { border-color: rgba(34,197,94,0.4); background: rgba(34,197,94,0.04); }
+  .exercise-card.done .ex-name { color: #86efac; }
+</style>
+{% endblock %}
+{% block content %}
+<div class="mb-6 flex items-center justify-between">
+  <div>
+    <h1 class="text-3xl font-display tracking-widest text-white">MY WORKOUTS</h1>
+    <p class="text-gray-400 text-sm mt-1">Your active training plans</p>
+  </div>
+  <a href="{% url 'workouts:history' %}" class="border border-surface-border hover:border-brand text-gray-300 hover:text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors">History</a>
+</div>
+
+{% if plans %}
+  {% for plan in plans %}
+  <div class="mb-8">
+    <div class="flex items-center gap-3 mb-4">
+      <h2 class="text-xl font-bold text-white">{{ plan.title }}</h2>
+      <span class="text-xs text-gray-500">by {{ plan.trainer.get_full_name }}</span>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+      {% for day in plan.days.all %}
+      <div class="bg-surface-card border border-surface-border rounded-xl overflow-hidden">
+        <div class="px-4 py-3 border-b border-surface-border bg-brand/5">
+          <h3 class="font-bold text-brand text-sm">{{ day.get_day_of_week_display }}</h3>
+          {% if day.notes %}<p class="text-gray-500 text-xs">{{ day.notes }}</p>{% endif %}
+        </div>
+        <div class="p-3 space-y-2">
+          {% for ex in day.exercises.all %}
+          <div class="exercise-card p-3 bg-surface rounded-lg border border-transparent transition-all" id="ex-{{ ex.pk }}">
+            <div class="flex items-start justify-between gap-2">
+              <div>
+                <p class="ex-name text-sm font-medium text-white">{{ ex.name }}</p>
+                <p class="text-xs text-gray-500">{{ ex.sets }}×{{ ex.reps }}</p>
+              </div>
+              <form method="post" action="{% url 'workouts:mark_complete' ex.pk %}">
+                {% csrf_token %}
+                <button type="submit" class="w-7 h-7 rounded-full border-2 border-gray-600 hover:border-green-500 flex items-center justify-center transition-colors flex-shrink-0 mt-0.5" title="Mark complete">
+                  <svg class="w-3.5 h-3.5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                </button>
+              </form>
+            </div>
+            {% if ex.instructions %}
+              <p class="text-xs text-gray-600 mt-1 italic">{{ ex.instructions }}</p>
+            {% endif %}
+          </div>
+          {% empty %}
+          <p class="text-gray-600 text-xs p-2">No exercises.</p>
+          {% endfor %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endfor %}
+{% else %}
+  <div class="bg-surface-card border border-surface-border rounded-xl p-14 text-center">
+    <p class="text-gray-500 text-lg mb-2">No workout plans assigned yet</p>
+    <p class="text-gray-600 text-sm">Your trainer will create and assign a plan for you.</p>
+  </div>
+{% endif %}
+{% endblock %}

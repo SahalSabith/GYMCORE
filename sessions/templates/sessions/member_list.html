@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block title %}My Sessions{% endblock %}
+{% block content %}
+<div>
+  <div class="flex items-center justify-between mb-8">
+    <div><p class="text-iron-500 text-xs uppercase tracking-widest">Member</p><h1 class="font-display text-4xl tracking-wider text-white mt-1">MY SESSIONS</h1></div>
+    <a href="{% url 'sessions:book' %}" class="inline-flex items-center gap-2 bg-forge-500 hover:bg-forge-600 text-white font-semibold px-5 py-2.5 rounded-xl transition-colors text-sm">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>Book Session
+    </a>
+  </div>
+  <div class="space-y-4">
+    {% for session in sessions %}
+    <div class="bg-iron-800 border border-iron-700 rounded-2xl p-6">
+      <div class="flex items-start justify-between flex-wrap gap-3">
+        <div>
+          <div class="flex items-center gap-3 mb-2">
+            <h3 class="font-semibold text-white">With {{ session.trainer.get_full_name }}</h3>
+            <span class="px-2 py-0.5 rounded-full text-xs font-semibold {{ status_colors|default:'' }}
+              {% if session.status == 'PENDING' %}bg-yellow-500/20 text-yellow-400
+              {% elif session.status == 'APPROVED' %}bg-green-500/20 text-green-400
+              {% elif session.status == 'REJECTED' %}bg-red-500/20 text-red-400
+              {% elif session.status == 'COMPLETED' %}bg-blue-500/20 text-blue-400
+              {% else %}bg-iron-600 text-iron-400{% endif %}">
+              {{ session.get_status_display }}
+            </span>
+          </div>
+          <p class="text-iron-400 text-sm">{{ session.date }} at {{ session.time }}</p>
+          {% if session.notes %}<p class="text-iron-500 text-xs mt-1">{{ session.notes }}</p>{% endif %}
+          {% if session.trainer_response %}<p class="text-iron-400 text-xs mt-1 italic">Trainer: {{ session.trainer_response }}</p>{% endif %}
+        </div>
+        {% if session.status in 'PENDING APPROVED' %}
+        <form method="post" action="{% url 'sessions:cancel' session.pk %}">
+          {% csrf_token %}
+          <button type="submit" class="text-xs font-medium px-3 py-1.5 rounded-lg bg-red-900/30 text-red-400 hover:bg-red-900/60 transition-colors">Cancel</button>
+        </form>
+        {% endif %}
+      </div>
+    </div>
+    {% empty %}
+    <div class="text-center py-16 text-iron-500 bg-iron-800 rounded-2xl border border-iron-700">
+      No sessions yet. <a href="{% url 'sessions:book' %}" class="text-forge-400 hover:underline">Book your first session →</a>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block title %}Subscribe — IronCore{% endblock %}
+
+{% block content %}
+<div class="max-w-lg mx-auto">
+  <a href="{% url 'memberships:plans' %}" class="inline-flex items-center gap-2 text-gray-400 hover:text-white text-sm mb-6 transition-colors">
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+    Back to Plans
+  </a>
+
+  <div class="bg-surface-card border border-surface-border rounded-2xl p-8">
+    <h1 class="font-display text-3xl tracking-widest text-white mb-1">CONFIRM SUBSCRIPTION</h1>
+    <p class="text-gray-400 text-sm mb-6">Review your plan and select a start date.</p>
+
+    <!-- Plan summary -->
+    <div class="bg-surface border border-surface-border rounded-xl p-4 mb-6">
+      <div class="flex justify-between items-start">
+        <div>
+          <p class="text-white font-semibold">{{ plan.name }}</p>
+          <p class="text-gray-400 text-xs mt-0.5">{{ plan.get_duration_days_display }}</p>
+          {% if plan.description %}<p class="text-gray-500 text-xs mt-1">{{ plan.description }}</p>{% endif %}
+        </div>
+        <span class="font-display text-2xl text-brand">${{ plan.price }}</span>
+      </div>
+    </div>
+
+    <form method="post">
+      {% csrf_token %}
+      <div class="mb-6">
+        <label class="block text-sm font-medium text-gray-300 mb-1.5">Start Date</label>
+        {{ form.start_date }}
+        {% for e in form.start_date.errors %}
+        <p class="text-red-400 text-xs mt-1">{{ e }}</p>
+        {% endfor %}
+      </div>
+      <button type="submit" class="btn-primary w-full py-3.5 rounded-xl font-semibold">
+        Confirm Subscription
+      </button>
+    </form>
+  </div>
+</div>
+{% endblock %}
