@@ -5,7 +5,7 @@ from django.shortcuts import render, redirect
 from django.views import View
 from django.utils.decorators import method_decorator
 
-from .forms import RegistrationForm, LoginForm, ProfileUpdateForm
+from .forms import RegistrationForm, LoginForm, ProfileUpdateForm, PasswordChangeForm
 
 
 class RegisterView(View):
@@ -70,5 +70,27 @@ class ProfileEditView(View):
         if form.is_valid():
             form.save()
             messages.success(request, 'Profile updated successfully.')
+            return redirect('accounts:profile')
+        return render(request, self.template_name, {'form': form})
+
+
+
+from django.contrib.auth import update_session_auth_hash
+
+@method_decorator(login_required, name='dispatch')
+class PasswordChangeView(View):
+    template_name = 'accounts/password_change.html'
+
+    def get(self, request):
+        form = PasswordChangeForm(user=request.user)
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request):
+        form = PasswordChangeForm(user=request.user, data=request.POST)
+        if form.is_valid():
+            form.save()
+            # Keep the user logged in after password change
+            update_session_auth_hash(request, request.user)
+            messages.success(request, 'Password changed successfully.')
             return redirect('accounts:profile')
         return render(request, self.template_name, {'form': form})

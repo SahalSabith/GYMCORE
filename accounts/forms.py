@@ -250,3 +250,56 @@ class ProfileUpdateForm(forms.ModelForm):
         if goal and len(goal) > 1000:
             raise forms.ValidationError("Fitness goal must not exceed 1000 characters.")
         return goal
+    
+
+class PasswordChangeForm(forms.Form):
+    current_password = forms.CharField(
+        widget=forms.PasswordInput,
+        label="Current Password",
+    )
+    new_password = forms.CharField(
+        widget=forms.PasswordInput,
+        label="New Password",
+        validators=[validate_strong_password],
+        help_text=(
+            "Must be at least 8 characters and include uppercase, lowercase, "
+            "a digit, and a special character."
+        ),
+    )
+    confirm_new_password = forms.CharField(
+        widget=forms.PasswordInput,
+        label="Confirm New Password",
+    )
+
+    def __init__(self, user, *args, **kwargs):
+        self.user = user
+        super().__init__(*args, **kwargs)
+
+    def clean_current_password(self):
+        current = self.cleaned_data.get("current_password")
+        if not self.user.check_password(current):
+            raise forms.ValidationError("Your current password is incorrect.")
+        return current
+
+    def clean_new_password(self):
+        new_pw = self.cleaned_data.get("new_password")
+        current = self.data.get("current_password")  # raw, pre-clean
+        if new_pw and current and new_pw == current:
+            raise forms.ValidationError(
+                "New password must be different from your current password."
+            )
+        return new_pw
+
+    def clean(self):
+        cleaned = super().clean()
+        new_pw = cleaned.get("new_password")
+        confirm = cleaned.get("confirm_new_password")
+        if new_pw and confirm and new_pw != confirm:
+            self.add_error("confirm_new_password", "Passwords do not match.")
+        return cleaned
+
+    def save(self, commit=True):
+        self.user.set_password(self.cleaned_data["new_password"])
+        if commit:
+            self.user.save()
+        return self.user

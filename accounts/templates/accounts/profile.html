@@ -4,7 +4,16 @@
 <div class="max-w-2xl mx-auto">
   <div class="flex items-center justify-between mb-8">
     <h1 class="text-3xl font-display tracking-wider text-white">MY PROFILE</h1>
-    <a href="{% url 'accounts:profile_edit' %}" class="btn-primary px-5 py-2 rounded-lg text-sm font-semibold">Edit Profile</a>
+    <div class="flex gap-3">
+      <a href="{% url 'accounts:password_change' %}"
+         class="px-5 py-2 rounded-lg text-sm font-semibold text-gray-300 hover:text-white transition-colors"
+         style="border:1px solid #374151;">
+        Change Password
+      </a>
+      <a href="{% url 'accounts:profile_edit' %}" class="btn-primary px-5 py-2 rounded-lg text-sm font-semibold">
+        Edit Profile
+      </a>
+    </div>
   </div>
 
   <div class="rounded-2xl p-6 md:p-8 space-y-6" style="background:#1f2937;border:1px solid #374151;">
@@ -31,7 +40,6 @@
     <hr style="border-color:#374151;">
 
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-      {% with fields=profile_user %}
       <div>
         <p class="text-xs text-gray-500 uppercase tracking-widest mb-1">Email</p>
         <p class="text-sm text-gray-200">{{ profile_user.email }}</p>
@@ -48,7 +56,6 @@
         <p class="text-xs text-gray-500 uppercase tracking-widest mb-1">Weight</p>
         <p class="text-sm text-gray-200">{% if profile_user.weight %}{{ profile_user.weight }} kg{% else %}—{% endif %}</p>
       </div>
-      {% endwith %}
     </div>
 
     {% if profile_user.fitness_goal %}
