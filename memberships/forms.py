@@ -1,6 +1,18 @@
 from django import forms
 from django.utils import timezone
-from .models import Subscription
+from .models import MembershipPlan, Subscription
+
+
+class MembershipPlanForm(forms.ModelForm):
+    class Meta:
+        model = MembershipPlan
+        fields = ["name", "price", "duration_days", "description", "is_active"]
+
+    def clean_price(self):
+        price = self.cleaned_data.get("price")
+        if price is not None and price <= 0:
+            raise forms.ValidationError("Price must be greater than zero.")
+        return price
 
 
 class SubscribeForm(forms.ModelForm):
@@ -18,7 +30,6 @@ class SubscribeForm(forms.ModelForm):
         today = timezone.now().date()
         if date < today:
             raise forms.ValidationError("Start date cannot be in the past.")
-        # Reasonable upper bound – prevent typos like year 9999
         max_future_days = 365
         if (date - today).days > max_future_days:
             raise forms.ValidationError(

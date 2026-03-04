@@ -76,20 +76,10 @@ class WorkoutDayForm(forms.ModelForm):
             "notes": forms.TextInput(attrs={"placeholder": "e.g. Chest & Triceps"}),
         }
 
-    def clean_day_of_week(self):
-        value = self.cleaned_data.get("day_of_week")
-        # Assuming day_of_week is an IntegerField (0=Mon … 6=Sun) or a ChoiceField
-        # Validate it is within range if it's an integer
-        if value is not None:
-            try:
-                value = int(value)
-            except (TypeError, ValueError):
-                raise forms.ValidationError("Select a valid day of the week.")
-            if value < 0 or value > 6:
-                raise forms.ValidationError(
-                    "Day of the week must be between 0 (Monday) and 6 (Sunday)."
-                )
-        return value
+    # clean_day_of_week intentionally REMOVED.
+    # Django's built-in choice validation on the IntegerField/ChoiceField already
+    # handles invalid values. Adding a custom clean that calls int() on the already-
+    # converted value was causing "Select a valid choice" errors for valid selections.
 
     def clean_notes(self):
         notes = self.cleaned_data.get("notes", "").strip()
@@ -105,7 +95,6 @@ class WorkoutDayForm(forms.ModelForm):
 
 # ── ExerciseForm ──────────────────────────────────────────────────────────────
 
-# Accepted reps formats: "10", "8-12", "10-15", "AMRAP", "30s", etc.
 _REPS_PATTERN = re.compile(
     r"^(\d{1,3}(-\d{1,3})?|[A-Za-z]{2,10}(\s*\d{0,3}[A-Za-z]*)?)$"
 )
