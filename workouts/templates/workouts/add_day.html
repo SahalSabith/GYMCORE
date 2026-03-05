@@ -3,7 +3,9 @@
 {% block content %}
 <div class="mb-6 flex items-center gap-3">
   <a href="{% url 'workouts:plan_detail' plan.pk %}" class="text-gray-400 hover:text-white transition-colors">
-    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+    </svg>
   </a>
   <div>
     <h1 class="text-3xl font-display tracking-widest text-white">ADD DAY</h1>
@@ -11,24 +13,49 @@
   </div>
 </div>
 
+{% if messages %}
+  {% for message in messages %}
+  <div class="mb-4 px-4 py-3 rounded-lg
+    {% if message.tags == 'success' %}bg-green-900/40 border border-green-700 text-green-300
+    {% else %}bg-red-900/40 border border-red-700 text-red-300{% endif %}">
+    {{ message }}
+  </div>
+  {% endfor %}
+{% endif %}
+
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-  <!-- Form -->
+
+  <!-- ── Add Day Form ── -->
   <div class="bg-surface-card border border-surface-border rounded-xl p-6">
-    <form method="post">
+    <form method="post" novalidate>
       {% csrf_token %}
+
       <h2 class="text-sm font-semibold text-gray-400 uppercase tracking-widest mb-4">Day Details</h2>
+
       {% for field in day_form %}
       <div class="mb-4">
         <label class="block text-sm font-medium text-gray-300 mb-1.5">{{ field.label }}</label>
         {{ field }}
-        {% for error in field.errors %}<p class="text-red-400 text-xs mt-1">{{ error }}</p>{% endfor %}
+        {% for error in field.errors %}
+          <p class="text-red-400 text-xs mt-1">{{ error }}</p>
+        {% endfor %}
       </div>
       {% endfor %}
 
+      {# Non-field errors (e.g. unique_together violation — duplicate day) #}
+      {% if day_form.non_field_errors %}
+        <div class="mb-4 px-3 py-2 bg-red-900/30 border border-red-700 rounded-lg">
+          {% for error in day_form.non_field_errors %}
+            <p class="text-red-400 text-xs">{{ error }}</p>
+          {% endfor %}
+        </div>
+      {% endif %}
+
       <h2 class="text-sm font-semibold text-gray-400 uppercase tracking-widest mt-6 mb-4">Exercises</h2>
       {{ formset.management_form }}
+
       {% for ef in formset %}
-      <div class="mb-4 p-4 bg-surface rounded-lg border border-surface-border relative">
+      <div class="mb-4 p-4 bg-surface rounded-lg border border-surface-border">
         <p class="text-xs text-gray-500 mb-3">Exercise {{ forloop.counter }}</p>
         {% for field in ef %}
           {% if field.html_name != ef.prefix|add:'-DELETE' %}
@@ -42,20 +69,32 @@
       </div>
       {% endfor %}
 
-      <button type="submit" class="w-full btn-primary py-3 rounded-lg font-semibold mt-2">Add This Day</button>
+      <button type="submit" class="w-full btn-primary py-3 rounded-lg font-semibold mt-2">
+        Add This Day
+      </button>
     </form>
   </div>
 
-  <!-- Existing days preview -->
+  <!-- ── Existing Days ── -->
   <div>
-    <h2 class="text-sm font-semibold text-gray-400 uppercase tracking-widest mb-4">Days Added ({{ existing_days|length }})</h2>
+    <h2 class="text-sm font-semibold text-gray-400 uppercase tracking-widest mb-4">
+      Days Added ({{ existing_days|length }})
+    </h2>
+
     {% if existing_days %}
     <div class="space-y-3">
       {% for day in existing_days %}
       <div class="bg-surface-card border border-surface-border rounded-xl p-4">
         <div class="flex items-center justify-between mb-2">
           <p class="font-semibold text-white">{{ day.get_day_of_week_display }}</p>
-          <span class="text-xs text-gray-500">{{ day.exercises.count }} exercises</span>
+          <div class="flex items-center gap-3">
+            <span class="text-xs text-gray-500">{{ day.exercises.count }} exercise{{ day.exercises.count|pluralize }}</span>
+            <!-- Edit button -->
+            <a href="{% url 'workouts:edit_day' day.pk %}"
+               class="text-xs text-brand hover:text-white border border-brand/40 hover:border-brand px-2 py-0.5 rounded transition-colors">
+              Edit
+            </a>
+          </div>
         </div>
         {% if day.notes %}<p class="text-brand text-xs mb-2">{{ day.notes }}</p>{% endif %}
         <div class="space-y-1">
@@ -66,14 +105,13 @@
       </div>
       {% endfor %}
     </div>
-    {% else %}
-    <p class="text-gray-600 text-sm">No days added yet.</p>
-    {% endif %}
 
-    {% if existing_days %}
-    <a href="{% url 'workouts:plan_detail' plan.pk %}" class="block text-center border border-surface-border hover:border-brand text-gray-300 hover:text-white py-3 rounded-lg text-sm font-semibold mt-4 transition-colors">
+    <a href="{% url 'workouts:plan_detail' plan.pk %}"
+       class="block text-center border border-surface-border hover:border-brand text-gray-300 hover:text-white py-3 rounded-lg text-sm font-semibold mt-4 transition-colors">
       Done — View Full Plan
     </a>
+    {% else %}
+    <p class="text-gray-600 text-sm">No days added yet.</p>
     {% endif %}
   </div>
 </div>

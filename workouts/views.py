@@ -59,13 +59,50 @@ class AddWorkoutDayView(LoginRequiredMixin, View):
             day.save()
             formset.instance = day
             formset.save()
-            messages.success(request, f'{day.get_day_of_week_display()} added.')
+            messages.success(request, f'{day.get_day_of_week_display()} added successfully.')
+            # Redirect to self with fresh forms — fixes the "can't add again" issue
             return redirect('workouts:add_day', plan_id=plan.pk)
         return render(request, self.template_name, {
             'plan': plan, 'day_form': day_form, 'formset': formset,
             'existing_days': plan.days.prefetch_related('exercises'),
         })
 
+
+@method_decorator(role_required('TRAINER'), name='dispatch')
+class EditWorkoutDayView(LoginRequiredMixin, View):
+    template_name = 'workouts/edit_day.html'
+
+    def get_day(self, day_id, trainer):
+        return get_object_or_404(
+            WorkoutDay, pk=day_id, workout_plan__trainer=trainer
+        )
+
+    def get(self, request, day_id):
+        day = self.get_day(day_id, request.user)
+        day_form = WorkoutDayForm(instance=day)
+        formset = ExerciseFormSet(instance=day)
+        return render(request, self.template_name, {
+            'plan': day.workout_plan,
+            'day': day,
+            'day_form': day_form,
+            'formset': formset,
+        })
+
+    def post(self, request, day_id):
+        day = self.get_day(day_id, request.user)
+        day_form = WorkoutDayForm(request.POST, instance=day)
+        formset = ExerciseFormSet(request.POST, instance=day)
+        if day_form.is_valid() and formset.is_valid():
+            day_form.save()
+            formset.save()
+            messages.success(request, f'{day.get_day_of_week_display()} updated.')
+            return redirect('workouts:add_day', plan_id=day.workout_plan.pk)
+        return render(request, self.template_name, {
+            'plan': day.workout_plan,
+            'day': day,
+            'day_form': day_form,
+            'formset': formset,
+        })
 
 @method_decorator(role_required('TRAINER'), name='dispatch')
 class WorkoutPlanDetailView(LoginRequiredMixin, DetailView):

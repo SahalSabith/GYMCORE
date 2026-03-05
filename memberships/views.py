@@ -84,8 +84,18 @@ class PlanDeleteView(LoginRequiredMixin, View):
     def post(self, request, plan_id):
         plan = get_object_or_404(MembershipPlan, pk=plan_id)
         name = plan.name
-        plan.delete()
-        messages.success(request, f'Plan "{name}" has been deleted.')
+        if plan.subscriptions.exists():
+            # Soft-delete: deactivate to preserve subscription history
+            plan.is_active = False
+            plan.save(update_fields=['is_active'])
+            messages.warning(
+                request,
+                f'Plan "{name}" has active subscriptions and cannot be fully deleted. '
+                f'It has been deactivated and is no longer visible to members.'
+            )
+        else:
+            plan.delete()
+            messages.success(request, f'Plan "{name}" has been deleted.')
         return redirect('memberships:plans')
 
 
