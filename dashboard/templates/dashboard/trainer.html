@@ -1,60 +1,168 @@
 {% extends 'base.html' %}
 {% block title %}Trainer Dashboard — IronForge{% endblock %}
 {% block content %}
-<div>
-  <div class="mb-8">
-    <p class="text-iron-500 text-sm uppercase tracking-widest font-medium">Welcome back</p>
-    <h1 class="font-display text-5xl tracking-wider text-white mt-1">{{ user.get_full_name|upper }}</h1>
-  </div>
 
-  <!-- Quick nav cards -->
-  <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
-    <a href="{% url 'trainers:my_profile' %}" class="bg-iron-800 border border-iron-700 hover:border-blue-500/50 rounded-2xl p-5 text-center transition-colors group">
-      <div class="w-10 h-10 bg-blue-500/10 rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:bg-blue-500/20 transition-colors">
-        <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
-      </div>
-      <p class="text-sm font-medium text-iron-300 group-hover:text-white">My Profile</p>
-    </a>
-    <a href="{% url 'workouts:trainer_plans' %}" class="bg-iron-800 border border-iron-700 hover:border-forge-500/50 rounded-2xl p-5 text-center transition-colors group">
-      <div class="w-10 h-10 bg-forge-500/10 rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:bg-forge-500/20 transition-colors">
-        <svg class="w-5 h-5 text-forge-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
-      </div>
-      <p class="text-sm font-medium text-iron-300 group-hover:text-white">Workouts</p>
-    </a>
-    <a href="{% url 'diet:trainer_list' %}" class="bg-iron-800 border border-iron-700 hover:border-green-500/50 rounded-2xl p-5 text-center transition-colors group">
-      <div class="w-10 h-10 bg-green-500/10 rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:bg-green-500/20 transition-colors">
-        <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>
-      </div>
-      <p class="text-sm font-medium text-iron-300 group-hover:text-white">Diet Plans</p>
-    </a>
-    <a href="{% url 'sessions:trainer_lists' %}" class="bg-iron-800 border border-iron-700 hover:border-yellow-500/50 rounded-2xl p-5 text-center transition-colors group">
-      <div class="w-10 h-10 bg-yellow-500/10 rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:bg-yellow-500/20 transition-colors">
-        <svg class="w-5 h-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-      </div>
-      <p class="text-sm font-medium text-iron-300 group-hover:text-white">Sessions</p>
-    </a>
-  </div>
+<style>
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes panSlow {
+    0%   { transform: scale(1.08) translate(0%, 0%); }
+    50%  { transform: scale(1.08) translate(-1.5%, -1%); }
+    100% { transform: scale(1.08) translate(0%, 0%); }
+  }
+  .hero-bg { animation: panSlow 18s ease-in-out infinite; }
+  .fade-in { animation: fadeIn 0.55s ease both; }
+  .fade-in-2 { animation: fadeIn 0.55s 0.1s ease both; }
+  .fade-in-3 { animation: fadeIn 0.55s 0.2s ease both; }
 
-  <div class="bg-iron-800 border border-iron-700 rounded-2xl overflow-hidden">
-    <div class="px-6 py-4 border-b border-iron-700">
-      <h2 class="font-semibold text-white">Assigned Members</h2>
-    </div>
-    <div class="divide-y divide-iron-700/50">
-      {% for member in assigned_members %}
-      <div class="flex items-center gap-4 px-6 py-4 hover:bg-iron-700/30 transition-colors">
-        {% if member.profile_photo %}<img src="{{ member.profile_photo.url }}" class="w-10 h-10 rounded-full object-cover">
-        {% else %}<div class="w-10 h-10 rounded-full bg-iron-600 flex items-center justify-center text-sm font-bold text-iron-300">{{ member.first_name|first|upper }}</div>{% endif %}
-        <div class="flex-1">
-          <p class="font-medium text-iron-100">{{ member.get_full_name }}</p>
-          <p class="text-iron-500 text-xs">{{ member.email }}</p>
-        </div>
-        {% if member.fitness_goal %}<p class="text-iron-400 text-xs max-w-xs truncate hidden sm:block">{{ member.fitness_goal }}</p>{% endif %}
-        <span class="inline-flex items-center gap-1.5 text-xs text-green-400"><span class="w-1.5 h-1.5 bg-green-400 rounded-full"></span>Active</span>
-      </div>
-      {% empty %}
-      <div class="px-6 py-12 text-center text-iron-500">No members assigned yet.</div>
-      {% endfor %}
-    </div>
+  .card-img-bg {
+    background-size: cover;
+    background-position: center;
+  }
+  .card-img-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.45) 100%);
+    border-radius: inherit;
+  }
+</style>
+
+<!-- ── Hero banner with gym background ── -->
+<div class="relative rounded-3xl overflow-hidden mb-8 fade-in" style="min-height:220px;">
+  <!-- Background image -->
+  <img
+    src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=1400&auto=format&fit=crop&q=80"
+    alt=""
+    class="hero-bg absolute inset-0 w-full h-full object-cover object-center"
+    style="z-index:0;"
+  />
+  <!-- Dark gradient overlay -->
+  <div class="absolute inset-0" style="background:linear-gradient(90deg,rgba(0,0,0,0.82) 0%,rgba(0,0,0,0.35) 70%,transparent 100%);z-index:1;"></div>
+  <!-- Subtle noise grain -->
+  <div class="absolute inset-0" style="background-image:url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22n%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.9%22 numOctaves=%224%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23n)%22 opacity=%220.04%22/%3E%3C/svg%3E');z-index:2;"></div>
+  <!-- Text content -->
+  <div class="relative px-8 py-10" style="z-index:3;">
+    <p class="text-iron-400 text-xs uppercase tracking-[0.25em] font-semibold mb-2 opacity-80">Welcome back</p>
+    <h1 class="font-display text-5xl tracking-wider text-white font-bold drop-shadow-lg">
+      {{ user.get_full_name|upper }}
+    </h1>
+    <p class="text-iron-400 text-sm mt-3 opacity-70">Trainer Dashboard &mdash; IronForge</p>
   </div>
 </div>
+
+<!-- ── Quick nav cards with individual gym image backgrounds ── -->
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8 fade-in-2">
+
+  <!-- My Profile — barbell close-up -->
+  <a href="{% url 'trainers:my_profile' %}"
+     class="relative rounded-2xl overflow-hidden border border-iron-700 hover:border-blue-500/60 transition-all group"
+     style="min-height:130px;">
+    <div class="card-img-bg absolute inset-0"
+         style="background-image:url('https://images.unsplash.com/photo-1576678927484-cc907957088c?w=400&auto=format&fit=crop&q=75');"></div>
+    <div class="card-img-overlay group-hover:bg-opacity-50 transition-all"></div>
+    <div class="relative z-10 flex flex-col items-center justify-center h-full p-5 text-center" style="min-height:130px;">
+      <div class="w-10 h-10 bg-blue-500/20 border border-blue-400/30 rounded-xl flex items-center justify-center mb-3 group-hover:bg-blue-500/40 transition-colors backdrop-blur-sm">
+        <svg class="w-5 h-5 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+      </div>
+      <p class="text-sm font-semibold text-white drop-shadow">My Profile</p>
+    </div>
+  </a>
+
+  <!-- Workouts — weights rack -->
+  <a href="{% url 'workouts:trainer_plans' %}"
+     class="relative rounded-2xl overflow-hidden border border-iron-700 hover:border-orange-500/60 transition-all group"
+     style="min-height:130px;">
+    <div class="card-img-bg absolute inset-0"
+         style="background-image:url('https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?w=400&auto=format&fit=crop&q=75');"></div>
+    <div class="card-img-overlay group-hover:bg-opacity-50 transition-all"></div>
+    <div class="relative z-10 flex flex-col items-center justify-center h-full p-5 text-center" style="min-height:130px;">
+      <div class="w-10 h-10 bg-orange-500/20 border border-orange-400/30 rounded-xl flex items-center justify-center mb-3 group-hover:bg-orange-500/40 transition-colors backdrop-blur-sm">
+        <svg class="w-5 h-5 text-orange-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+      </div>
+      <p class="text-sm font-semibold text-white drop-shadow">Workouts</p>
+    </div>
+  </a>
+
+  <!-- Diet Plans — healthy food / salad -->
+  <a href="{% url 'diet:trainer_list' %}"
+     class="relative rounded-2xl overflow-hidden border border-iron-700 hover:border-green-500/60 transition-all group"
+     style="min-height:130px;">
+    <div class="card-img-bg absolute inset-0"
+         style="background-image:url('https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=400&auto=format&fit=crop&q=75');"></div>
+    <div class="card-img-overlay group-hover:bg-opacity-50 transition-all"></div>
+    <div class="relative z-10 flex flex-col items-center justify-center h-full p-5 text-center" style="min-height:130px;">
+      <div class="w-10 h-10 bg-green-500/20 border border-green-400/30 rounded-xl flex items-center justify-center mb-3 group-hover:bg-green-500/40 transition-colors backdrop-blur-sm">
+        <svg class="w-5 h-5 text-green-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>
+      </div>
+      <p class="text-sm font-semibold text-white drop-shadow">Diet Plans</p>
+    </div>
+  </a>
+
+  <!-- Sessions — gym calendar / training -->
+  <a href="{% url 'sessions:trainer_lists' %}"
+     class="relative rounded-2xl overflow-hidden border border-iron-700 hover:border-yellow-500/60 transition-all group"
+     style="min-height:130px;">
+    <div class="card-img-bg absolute inset-0"
+         style="background-image:url('https://images.unsplash.com/photo-1599058945522-28d584b6f0ff?w=400&auto=format&fit=crop&q=75');"></div>
+    <div class="card-img-overlay group-hover:bg-opacity-50 transition-all"></div>
+    <div class="relative z-10 flex flex-col items-center justify-center h-full p-5 text-center" style="min-height:130px;">
+      <div class="w-10 h-10 bg-yellow-500/20 border border-yellow-400/30 rounded-xl flex items-center justify-center mb-3 group-hover:bg-yellow-500/40 transition-colors backdrop-blur-sm">
+        <svg class="w-5 h-5 text-yellow-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+      </div>
+      <p class="text-sm font-semibold text-white drop-shadow">Sessions</p>
+    </div>
+  </a>
+
+</div>
+
+<!-- ── Assigned Members panel ── -->
+<div class="bg-iron-800 border border-iron-700 rounded-2xl overflow-hidden fade-in-3">
+
+  <!-- Panel header with subtle gym texture strip -->
+  <div class="relative border-b border-iron-700 overflow-hidden">
+    <div class="absolute inset-0"
+         style="background-image:url('https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=900&auto=format&fit=crop&q=60');background-size:cover;background-position:center 40%;opacity:0.12;"></div>
+    <div class="relative px-6 py-4 flex items-center justify-between">
+      <h2 class="font-semibold text-white tracking-wide">Assigned Members</h2>
+      <span class="text-xs text-iron-500 bg-iron-700/60 px-2.5 py-1 rounded-full">
+        {{ assigned_members|length }} member{{ assigned_members|length|pluralize }}
+      </span>
+    </div>
+  </div>
+
+  <div class="divide-y divide-iron-700/50">
+    {% for member in assigned_members %}
+    <div class="flex items-center gap-4 px-6 py-4 hover:bg-iron-700/30 transition-colors">
+      {% if member.profile_photo %}
+        <img src="{{ member.profile_photo.url }}" class="w-10 h-10 rounded-full object-cover ring-2 ring-iron-600">
+      {% else %}
+        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-iron-600 to-iron-700 flex items-center justify-center text-sm font-bold text-iron-300 ring-2 ring-iron-600">
+          {{ member.first_name|first|upper }}
+        </div>
+      {% endif %}
+      <div class="flex-1 min-w-0">
+        <p class="font-medium text-iron-100">{{ member.get_full_name }}</p>
+        <p class="text-iron-500 text-xs truncate">{{ member.email }}</p>
+      </div>
+      {% if member.fitness_goal %}
+        <p class="text-iron-400 text-xs max-w-xs truncate hidden sm:block">{{ member.fitness_goal }}</p>
+      {% endif %}
+      <span class="inline-flex items-center gap-1.5 text-xs text-green-400 shrink-0">
+        <span class="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse"></span>Active
+      </span>
+    </div>
+    {% empty %}
+    <div class="relative overflow-hidden">
+      <div class="absolute inset-0"
+           style="background-image:url('https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=900&auto=format&fit=crop&q=60');background-size:cover;background-position:center;opacity:0.07;"></div>
+      <div class="relative px-6 py-14 text-center text-iron-500">
+        <svg class="w-8 h-8 mx-auto mb-3 opacity-30" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        No members assigned yet.
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
 {% endblock %}
