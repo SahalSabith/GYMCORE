@@ -19,7 +19,7 @@ class MembershipPlan(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f'{self.name} – ${self.price}'
+        return f'{self.name} – ₹{self.price}'
 
 
 class Subscription(models.Model):
